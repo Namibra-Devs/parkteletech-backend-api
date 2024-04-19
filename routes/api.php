@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\ProductController;
+use App\Http\Controllers\TrainingScheduleController;
 use App\Http\Controllers\AuthController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -25,6 +25,12 @@ Route::post('/admin/login', [AuthController::class, 'adminLogin']);
 
 // Protected routes
 Route::group(['middleware' => ['auth:sanctum']], function () {
+    Route::get('/training_shedule', [TrainingScheduleController::class, 'index']);
+    Route::post('/training_shedule', [TrainingScheduleController::class, 'store']);
+    Route::get('/training_shedule/{id}', [TrainingScheduleController::class, 'show']);
+    Route::put('/training_shedule/{id}', [TrainingScheduleController::class, 'update']);
+    Route::delete('/training_shedule/{id}', [TrainingScheduleController::class, 'destroy']);
+
     Route::post('/logout', [AuthController::class, 'logout']);
 });
 

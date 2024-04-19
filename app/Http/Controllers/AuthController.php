@@ -9,6 +9,12 @@ use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
+    /**
+     * Register a new user and issue a token.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
     public function register(Request $request) {
         $fields = $request->validate([
             'name' => 'required|string',
@@ -25,44 +31,52 @@ class AuthController extends Controller
         $token = $user->createToken('myapptoken')->plainTextToken;
 
         $response = [
+            'message' => 'User successfully registered.',
             'user' => $user,
             'token' => $token
         ];
 
-        return response($response, 201);
+        return response()->json($response, 201);
     }
 
+    /**
+     * Admin login and issue a token.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
     public function adminLogin(Request $request) {
         $fields = $request->validate([
             'email' => 'required|string',
             'password' => 'required|string'
         ]);
 
-        // Check email
         $user = User::where('email', $fields['email'])->first();
 
-        // Check password
         if(!$user || !Hash::check($fields['password'], $user->password)) {
-            return response([
-                'message' => 'Bad creds'
-            ], 401);
+            return response()->json(['message' => 'Invalid credentials'], 401);
         }
 
         $token = $user->createToken('myapptoken')->plainTextToken;
 
         $response = [
+            'message' => 'Admin logged in successfully.',
             'user' => $user,
             'token' => $token
         ];
 
-        return response($response, 201);
+        return response()->json($response, 200);
     }
 
+    /**
+     * Logout the user and revoke all tokens.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
     public function logout(Request $request) {
         auth()->user()->tokens()->delete();
 
-        return [
-            'message' => 'Logged out'
-        ];
+        return response()->json(['message' => 'Successfully logged out'], 200);
     }
 }
