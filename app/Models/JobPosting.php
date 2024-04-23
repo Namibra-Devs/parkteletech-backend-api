@@ -5,14 +5,15 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Product extends Model
+class JobPosting extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'name',
-        'slug',
+        'title',
+        'department',
+        'qualification',
         'description',
-        'price'
+        'salary'
     ];
 }
