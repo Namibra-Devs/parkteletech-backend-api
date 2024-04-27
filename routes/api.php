@@ -5,6 +5,11 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\JobPostingController;
 use App\Http\Controllers\StaffDetailsController;
 use App\Http\Controllers\SubcontractorController;
+use App\Http\Controllers\DocumentController;
+use App\Http\Controllers\FolderController;
+use App\Http\Controllers\JobApplicationController;
+use App\Http\Controllers\PhotoReportController;
+use App\Http\Controllers\ProjectController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -25,15 +30,29 @@ use Illuminate\Support\Facades\Route;
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/admin/login', [AuthController::class, 'adminLogin']);
 
-
 // Protected routes
 Route::group(['middleware' => ['auth:sanctum']], function () {
     // Training schedule route
-    Route::get('/training_shedule', [TrainingScheduleController::class, 'index']);
-    Route::post('/training_shedule', [TrainingScheduleController::class, 'store']);
-    Route::get('/training_shedule/{id}', [TrainingScheduleController::class, 'show']);
-    Route::put('/training_shedule/{id}', [TrainingScheduleController::class, 'update']);
-    Route::delete('/training_shedule/{id}', [TrainingScheduleController::class, 'destroy']);
+    Route::get('/training_shedule', [
+        TrainingScheduleController::class,
+        'index',
+    ]);
+    Route::post('/training_shedule', [
+        TrainingScheduleController::class,
+        'store',
+    ]);
+    Route::get('/training_shedule/{id}', [
+        TrainingScheduleController::class,
+        'show',
+    ]);
+    Route::put('/training_shedule/{id}', [
+        TrainingScheduleController::class,
+        'update',
+    ]);
+    Route::delete('/training_shedule/{id}', [
+        TrainingScheduleController::class,
+        'destroy',
+    ]);
 
     //Subcontractor routes
     Route::resource('subcontractor', SubcontractorController::class)->names([
@@ -62,11 +81,56 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
         'destroy' => 'subcontractor.destroy',
     ]);
 
+    // Document management routes
+    Route::resource('documents', DocumentController::class)->names([
+        'index' => 'documents.index',
+        'store' => 'documents.store',
+        'show' => 'documents.show',
+        'update' => 'documents.update',
+        'destroy' => 'documents.destroy',
+    ]);
+
+    // Job application routes
+    Route::resource('job-applications', JobApplicationController::class)->names(
+        [
+            'index' => 'job-applications.index',
+            'store' => 'job-applications.store',
+            'show' => 'job-applications.show',
+            'update' => 'job-applications.update',
+            'destroy' => 'job-applications.destroy',
+        ]
+    );
+
+    // Projects routes
+    Route::resource('projects', ProjectController::class)->names([
+        'index' => 'projects.index',
+        'store' => 'projects.store',
+        'show' => 'projects.show',
+        'update' => 'projects.update',
+        'destroy' => 'projects.destroy',
+    ]);
+
+    // Folder routes
+    Route::resource('folders', FolderController::class)->names([
+        'index' => 'folders.index',
+        'store' => 'folders.store',
+        'show' => 'folders.show',
+        'update' => 'folders.update',
+        'destroy' => 'folders.destroy',
+    ]);
+
+    // Photoreport routes
+    Route::apiResource('photo_reports', PhotoReportController::class)
+    ->names([
+        'index'   => 'photo_reports.index',
+        'store'   => 'photo_reports.store',
+        'show'    => 'photo_reports.show',
+        'update'  => 'photo_reports.update',
+        'destroy' => 'photo_reports.destroy',
+    ]);
 
     Route::post('/logout', [AuthController::class, 'logout']);
 });
-
-
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();

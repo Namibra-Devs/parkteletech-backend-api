@@ -8,6 +8,9 @@ use App\Models\Files;
 use App\Traits\Upload;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Validation\ValidationException;
+use Exception;
 
 class StaffDetailsController extends Controller
 {
@@ -20,8 +23,16 @@ class StaffDetailsController extends Controller
      */
     public function index()
     {
-        $staffDetails = StaffDetails::all();
-        return response()->json($staffDetails, 200);
+        try {
+            $staffDetails = StaffDetails::all();
+
+            return response()->json($staffDetails, 200); // HTTP 200 - OK
+        } catch (Exception $e) {
+            return response()->json([
+                'message' => 'An error occurred while fetching staff details.',
+                'error'   => $e->getMessage(),
+            ], 500); // HTTP 500 - Internal Server Error
+        }
     }
 
     /**
@@ -30,108 +41,77 @@ class StaffDetailsController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    // public function store(Request $request)
-    // {
-    //     $request->validate([
-    //         'fullname'           => 'required|string|max:255',
-    //         // 'email'              => 'required|string|email|unique:staff_details,email',
-    //         'email'              => 'required|string|email',
-    //         'dob'                => 'required|date',
-    //         'phone'              => 'required|string|max:20',
-    //         'id_type'            => 'required|string',
-    //         // 'id_no'              => 'required|string|unique:staff_details,id_no',
-    //         'id_no'              => 'required|string',
-    //         'employment_status'  => 'required|string',
-    //         'address'            => 'required|string',
-    //         'documents.*'        => 'file|mimes:pdf,doc,docx|max:2048', // Multiple document uploads
-    //     ]);
-    //     // dd($request->all());
-    //     $staffDetail = new StaffDetails($request->except('documents'));
-
-    //     if ($request->hasfile('documents')) {
-    //         // return response()->json(['message' => 'Staff detail not found'], 201); // 201 Created
-    //         $documents = [];
-    //         foreach ($request->file('documents') as $file) {
-    //             $path = $file->store('staff_documents', 'public');
-    //             $documents[] = $path;
-    //         }
-    //         $staffDetail->documents = json_encode($documents);
-    //     }
-
-    //     $staffDetail->save();
-
-    //     return response()->json($staffDetail, 201); // 201 Created
-    // }
-
-//     public function store(Request $request)
-// {
-//     // Validate input
-//     $request->validate([
-//         'fullname'           => 'required|string|max:255',
-//         'email'              => 'required|string|email',
-//         'dob'                => 'required|date',
-//         'phone'              => 'required|string|max:20',
-//         'id_type'            => 'required|string',
-//         'id_no'              => 'required|string',
-//         'employment_status'  => 'required|string',
-//         'address'            => 'required|string',
-//         'documents.*'        => 'file|mimes:pdf,doc,docx|max:2048',
-//     ]);
-
-//     // Debug output
-//     // dd($request->all(), $request->file('documents')); // For debugging the input data and files
-
-//     // Create the StaffDetails instance
-//     $staffDetail = new StaffDetails($request->except('documents'));
-
-//     // Handle file uploads
-//     if ($request->hasFile('documents')) {
-//         $documents = [];
-//         foreach ($request->file('documents') as $file) {
-//             $path = $file->store('staff_documents', 'public'); // Store in 'public' disk
-//             $documents[] = $path;
-//         }
-//         $staffDetail->documents = json_encode($documents);
-//     } else {
-//         // No files found
-//         return response()->json(['message' => 'No documents uploaded'], 400); // HTTP 400 - Bad Request
-//     }
-
-//     // Save the staff details
-//     $staffDetail->save();
-
-//     // Return a success response
-//     return response()->json($staffDetail, 201); // HTTP 201 - Created
-// }
-
-public function store(Request $request)
-{
-
-    $file_details = [];
-
-    //check if request has files
-    if ($request->hasFile('files')) {
 
 
-        foreach ($request->file('files') as $key => $file) {
-            //Upload to Storage
-            $path = $this->UploadFile($file, 'Products');
 
-            //reformat the file details
-            array_push($file_details, [
-                'path' => $path,
-            ]);
-        }
 
-        //add each file details to database
-        foreach ($file_details as $key => $value) {
-            Files::create($value);
-        }
-        return response()->json([
-            'path' => "path"], 200);
-    }
-}
 
+     public function store(Request $request)
+     {
+         try {
+             $request->validate([
+                 'fullname'           => 'required|string|max:255',
+                 'email'              => 'required|string|email',
+                 'dob'                => 'required|date',
+                 'phone'              => 'required|string|max:20',
+                 'id_type'            => 'required|string',
+                 'id_no'              => 'required|string',
+                 'employment_status'  => 'required|string',
+                 'address'            => 'required|string',
+             ]);
+
+             $staffDetail = new StaffDetails([
+                 'fullname'          => $request->input('fullname'),
+                 'email'             => $request->input('email'),
+                 'dob'               => $request->input('dob'),
+                 'phone'             => $request->input('phone'),
+                 'id_type'           => $request->input('id_type'),
+                 'id_no'             => $request->input('id_no'),
+                 'employment_status'=> $request->input('employment_status'),
+                 'address'           => $request->input('address'),
+             ]);
+
+             $file_details = [];
+
+             if ($request->hasFile('files')) {
+                 foreach ($request->file('files') as $file) {
+                     $path = $this->UploadFile($file, 'staff_documents');
+                     $file_details[] = ['path' => $path];
+                 }
+             }
+
+             $staffDetail->save();
+             $names = ['cv', 'cert', 'hse_cert'];
+             $count = 0;
+
+             foreach ($file_details as $file_detail) {
+                 Files::create([
+                     'staff_detail_id' => $staffDetail->id,
+                     'name'            => $names[$count],
+                     'path'            => $file_detail['path'],
+                 ]);
+                 $count++;
+             }
+
+             return response()->json([
+                 'message' => 'Staff detail and files saved successfully.',
+                 'data'    => $staffDetail,
+                 'files'   => $file_details,
+             ], 201); // HTTP 201 - Created
+
+         } catch (ValidationException $e) {
+             return response()->json([
+                 'message' => 'Validation error.',
+                 'errors'  => $e->errors(),
+             ], 422); // HTTP 422 - Unprocessable Entity
+
+         } catch (Exception $e) {
+             return response()->json([
+                 'message' => 'An error occurred while processing your request.',
+                 'error'   => $e->getMessage(),
+             ], 500); // HTTP 500 - Internal Server Error
+         }
+     }
 
 
     /**
@@ -142,13 +122,27 @@ public function store(Request $request)
      */
     public function show($id)
     {
-        $staffDetail = StaffDetails::find($id);
+        try {
+            $staffDetail = StaffDetails::findOrFail($id); // Throws ModelNotFoundException if not found
+            $files = Files::where('staff_detail_id', $id)->get(); // Retrieve associated files
 
-        if (!$staffDetail) {
-            return response()->json(['message' => 'Staff detail not found'], 404);
+            return response()->json([
+                'data'  => $staffDetail,
+                'files' => $files,
+            ], 200); // HTTP 200 - OK
+
+        } catch (ModelNotFoundException $e) {
+            return response()->json([
+                'message' => 'Staff detail not found.',
+                'error'   => $e->getMessage(),
+            ], 404); // HTTP 404 - Not Found
+
+        } catch (Exception $e) {
+            return response()->json([
+                'message' => 'An error occurred while fetching staff details.',
+                'error'   => $e->getMessage(),
+            ], 500); // HTTP 500 - Internal Server Error
         }
-
-        return response()->json($staffDetail);
     }
 
     /**
@@ -160,15 +154,78 @@ public function store(Request $request)
      */
     public function update(Request $request, $id)
     {
-        $staffDetail = StaffDetails::find($id);
+        try {
+            $request->validate([
+                'fullname'          => 'sometimes|string|max:255',
+                'email'             => 'sometimes|string|email',
+                'dob'               => 'sometimes|date',
+                'phone'             => 'sometimes|string|max:20',
+                'id_type'           => 'sometimes|string',
+                'id_no'             => 'sometimes|string',
+                'employment_status'=> 'sometimes|string',
+                'address'           => 'sometimes|string',
+            ]);
 
-        if (!$staffDetail) {
-            return response()->json(['message' => 'Staff detail not found'], 404);
+            $staffDetail = StaffDetails::findOrFail($id);
+
+            $files = Files::where('staff_detail_id', $id)->get();
+
+            // Delete existing files from storage and the database
+            foreach ($files as $file) {
+                $this->deleteFile($file->path);
+                $file->delete(); // Delete the record from the database
+            }
+
+            // Update the staff details
+            $staffDetail->update($request->except('files'));
+
+            $names = ['cv', 'cert', 'hse_cert'];
+            $count = 0;
+
+
+            // Add new files if provided
+            if ($request->hasFile('files')) {
+                foreach ($request->file('files') as $file) {
+                    $path = $this->uploadFile($file, 'staff_documents');
+
+                    Files::create([
+                        'staff_detail_id' => $staffDetail->id,
+                        'name'            => $names[$count],
+                        'path'            => $path,
+                    ]);
+
+                    $count++;
+
+
+            }
         }
 
-        $staffDetail->update($request->all());
+            $updatedFiles = Files::where('staff_detail_id', $staffDetail->id)->get();
 
-        return response()->json($staffDetail, 200);
+            return response()->json([
+                'message' => 'Staff details updated successfully.',
+                'data'    => $staffDetail,
+                'files'   => $updatedFiles,
+            ], 200); // HTTP 200 - OK
+
+        } catch (ModelNotFoundException $e) {
+            return response()->json([
+                'message' => 'Staff detail not found.',
+                'error'   => $e->getMessage(),
+            ], 404); // HTTP 404 - Not Found
+
+        } catch (ValidationException $e) {
+            return response()->json([
+                'message' => 'Validation error.',
+                'errors'  => $e->errors(),
+            ], 422); // HTTP 422 - Unprocessable Entity
+
+        } catch (Exception $e) {
+            return response()->json([
+                'message' => 'An error occurred while updating staff details.',
+                'error'   => $e->getMessage(),
+            ], 500); // HTTP 500 - Internal Server Error
+        }
     }
 
     /**
@@ -179,14 +236,37 @@ public function store(Request $request)
      */
     public function destroy($id)
     {
-        $staffDetail = StaffDetails::find($id);
+        try {
+            // Check if the staff detail exists
+            $staffDetail = StaffDetails::findOrFail($id);
 
-        if (!$staffDetail) {
-            return response()->json(['message' => 'Staff detail not found'], 404);
+            // Get all files associated with the staff detail
+            $files = Files::where('staff_detail_id', $staffDetail->id)->get();
+
+            foreach ($files as $file) {
+                $this->deleteFile($file->path); // Delete from storage
+                $file->delete(); // Delete the record from the database
+            }
+
+            $staffDetail->delete(); // Delete the staff detail
+
+            return response()->json([
+                'message' => 'Staff detail and associated files deleted successfully.',
+            ], 200); // HTTP 200 - OK
+
+        } catch (ModelNotFoundException $e) {
+            // If the staff detail is not found
+            return response()->json([
+                'message' => 'Staff detail not found.',
+                'error'   => $e->getMessage(),
+            ], 404); // HTTP 404 - Not Found
+
+        } catch (Exception $e) {
+            // For other unexpected errors
+            return response()->json([
+                'message' => 'An error occurred while deleting the staff detail.',
+                'error'   => $e->getMessage(),
+            ], 500); // HTTP 500 - Internal Server Error
         }
-
-        $staffDetail->delete();
-
-        return response()->json(['message' => 'Staff detail deleted'], 200);
     }
 }
