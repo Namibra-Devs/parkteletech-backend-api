@@ -6,8 +6,6 @@ use App\Models\StaffDetails;
 use Illuminate\Http\Request;
 use App\Models\Files;
 use App\Traits\Upload;
-use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Validation\ValidationException;
 use Exception;

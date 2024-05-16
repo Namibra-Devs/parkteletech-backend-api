@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Files;
 use App\Traits\Upload;
-use Illuminate\Support\Facades\Storage;
 
 class FilesController extends Controller
 {
