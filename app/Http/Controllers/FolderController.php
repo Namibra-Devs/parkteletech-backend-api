@@ -23,7 +23,6 @@ class FolderController extends Controller
                 'offer_date'   => 'required|string',
                 'offer_link'   => 'required|string|max:255',
                 'status'       => 'required|string|max:255',
-                // 'file'         => 'required|file|mimes:pdf,doc,docx|max:2048', // File upload field
             ]);
 
             // Handle file upload

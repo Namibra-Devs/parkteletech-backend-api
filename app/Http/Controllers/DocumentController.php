@@ -4,10 +4,10 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Document;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use App\Traits\Upload;
 use Exception;
+use Illuminate\Support\Facades\Artisan;
 
 class DocumentController extends Controller {
 
@@ -16,10 +16,24 @@ class DocumentController extends Controller {
     public function store( Request $request ) {
         try {
             $request->validate( [
-                // 'file'       => 'required|file|mimes:pdf,doc,docx|max:2048', // Validate file type and size
                 'filename'   => 'required|string|max:255', // Validate filename
                 'file_type'  => 'required|string|max:255', // Validate file type
             ] );
+
+            //Permission issues
+            // $targetFolder = base_path().'/storage/app/public';
+            // $linkFolder = base_path().'/public/storage';
+            // symlink($targetFolder,$linkFolder);
+
+            // No permission issues
+            try {
+                // Create symbolic link for storage
+                Artisan::call('storage:link');
+                // echo 'Symlink process successfully completed';
+            } catch (\Exception $e) {
+                // Handle any exceptions
+                echo 'An error occurred: ' . $e->getMessage();
+            }
 
             $file = $request->file( 'file' );
             $file_path = $this->UploadFile( $file, 'contract_documents' );

@@ -10,6 +10,7 @@ trait Upload
 {
     public function UploadFile(UploadedFile $file, $folder = null, $disk = 'public', $filename = null)
     {
+
         $FileName = !is_null($filename) ? $filename : Str::random(10);
         return $file->storeAs(
             $folder,
