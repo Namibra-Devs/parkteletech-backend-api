@@ -13,6 +13,7 @@ use App\Http\Controllers\PhotoReportController;
 use App\Http\Controllers\ProjectController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AuthCheckController;
 
 /*
 |--------------------------------------------------------------------------
@@ -30,6 +31,9 @@ use Illuminate\Support\Facades\Route;
 // Public routes
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/admin/login', [AuthController::class, 'adminLogin']);
+
+// Auth check route
+Route::get('/check-auth', [AuthCheckController::class, 'checkAuth'])->name('auth.check');
 
 // Protected routes
 Route::group(['middleware' => ['auth:sanctum']], function () {
@@ -136,6 +140,6 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('/logout', [AuthController::class, 'logout']);
 });
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
-});
+// Route::middleware('auth:api')->get('/user', function (Request $request) {
+//     return $request->user();
+// });
