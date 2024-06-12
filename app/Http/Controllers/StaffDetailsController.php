@@ -6,6 +6,8 @@ use App\Models\StaffDetails;
 use Illuminate\Http\Request;
 use App\Models\Files;
 use App\Traits\Upload;
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Validation\ValidationException;
 use Exception;
@@ -56,6 +58,7 @@ class StaffDetailsController extends Controller
                  'id_no'              => 'required|string',
                  'employment_status'  => 'required|string',
                  'address'            => 'required|string',
+                 'department'         => 'required|string',
              ]);
 
              $staffDetail = new StaffDetails([
@@ -67,6 +70,7 @@ class StaffDetailsController extends Controller
                  'id_no'             => $request->input('id_no'),
                  'employment_status'=> $request->input('employment_status'),
                  'address'           => $request->input('address'),
+                 'department'           => $request->input('department'),
              ]);
 
              $file_details = [];
@@ -162,6 +166,7 @@ class StaffDetailsController extends Controller
                 'id_no'             => 'sometimes|string',
                 'employment_status'=> 'sometimes|string',
                 'address'           => 'sometimes|string',
+                'department'         => 'required|string',
             ]);
 
             $staffDetail = StaffDetails::findOrFail($id);

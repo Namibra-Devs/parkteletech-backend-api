@@ -11,9 +11,9 @@ use App\Http\Controllers\FolderController;
 use App\Http\Controllers\JobApplicationController;
 use App\Http\Controllers\PhotoReportController;
 use App\Http\Controllers\ProjectController;
+use App\Http\Controllers\AuthCheckController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\AuthCheckController;
 
 /*
 |--------------------------------------------------------------------------
