@@ -6,10 +6,12 @@ use App\Http\Controllers\JobPostingController;
 use App\Http\Controllers\StaffDetailsController;
 use App\Http\Controllers\SubcontractorController;
 use App\Http\Controllers\DocumentController;
+use App\Http\Controllers\EmailController;
 use App\Http\Controllers\FolderController;
 use App\Http\Controllers\JobApplicationController;
 use App\Http\Controllers\PhotoReportController;
 use App\Http\Controllers\ProjectController;
+use App\Http\Controllers\AuthCheckController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -29,6 +31,9 @@ use Illuminate\Support\Facades\Route;
 // Public routes
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/admin/login', [AuthController::class, 'adminLogin']);
+
+// Auth check route
+Route::get('/check-auth', [AuthCheckController::class, 'checkAuth'])->name('auth.check');
 
 // Protected routes
 Route::group(['middleware' => ['auth:sanctum']], function () {
@@ -91,7 +96,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     ]);
 
     // Job application routes
-    Route::resource('job-applications', JobApplicationController::class)->names(
+    Route::resource('job_applications', JobApplicationController::class)->names(
         [
             'index' => 'job-applications.index',
             'store' => 'job-applications.store',
@@ -128,6 +133,9 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
         'update'  => 'photo_reports.update',
         'destroy' => 'photo_reports.destroy',
     ]);
+
+    // Sendmail Route
+    Route::post('/send_email', [EmailController::class, 'sendEmail'])->name('send.email');
 
     Route::post('/logout', [AuthController::class, 'logout']);
 });
