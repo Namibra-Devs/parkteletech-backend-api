@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Folder;
+use App\Models\FolderInternal;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Exception;
@@ -33,10 +33,10 @@ class FolderController extends Controller
             $validated['file_path'] = $file_path; // Include file path in validated data
 
             // Create the folder record
-            $folder = Folder::create($validated);
+            $folder = FolderInternal::create($validated);
 
             return response()->json([
-                'message' => 'Folder created successfully.',
+                'message' => 'FolderInternal created successfully.',
                 'data'    => $folder,
             ], Response::HTTP_CREATED); // HTTP 201 Created
 
@@ -57,7 +57,7 @@ class FolderController extends Controller
     public function index()
     {
         try {
-            $folders = Folder::all();
+            $folders = FolderInternal::all();
 
             return response()->json($folders, Response::HTTP_OK); // HTTP 200 OK
 
@@ -84,7 +84,7 @@ class FolderController extends Controller
         ]);
 
         // Find the folder by ID
-        $folder = Folder::findOrFail($id);
+        $folder = FolderInternal::findOrFail($id);
 
         // Check if there's a new file and delete the existing one before updating
         if ($request->hasFile('file')) {
@@ -103,7 +103,7 @@ class FolderController extends Controller
         $folder->update($validated);
 
         return response()->json([
-            'message' => 'Folder updated successfully.',
+            'message' => 'FolderInternal updated successfully.',
             'data'    => $folder,
         ], Response::HTTP_OK); // HTTP 200 OK
 
@@ -115,7 +115,7 @@ class FolderController extends Controller
 
     } catch (ModelNotFoundException $e) {
         return response()->json([
-            'message' => 'Folder not found.',
+            'message' => 'FolderInternal not found.',
             'error'   => $e->getMessage(),
         ], Response::HTTP_NOT_FOUND); // HTTP 404 Not Found
 
@@ -130,13 +130,13 @@ class FolderController extends Controller
     public function show($id)
 {
     try {
-        $folder = Folder::findOrFail($id);
+        $folder = FolderInternal::findOrFail($id);
 
         return response()->json($folder, Response::HTTP_OK);
 
     } catch (ModelNotFoundException $e) {
         return response()->json([
-            'message' => 'Folder not found.',
+            'message' => 'FolderInternal not found.',
             'error'   => $e->getMessage(),
         ], Response::HTTP_NOT_FOUND);
 
@@ -151,7 +151,7 @@ class FolderController extends Controller
 public function destroy($id)
 {
     try {
-        $folder = Folder::findOrFail($id);
+        $folder = FolderInternal::findOrFail($id);
 
         // Delete the associated file from storage
         if ($folder->file_path) {
@@ -162,12 +162,12 @@ public function destroy($id)
         $folder->delete();
 
         return response()->json([
-            'message' => 'Folder deleted successfully.',
+            'message' => 'FolderInternal deleted successfully.',
         ], Response::HTTP_OK); // HTTP 200 OK
 
     } catch (ModelNotFoundException $e) {
         return response()->json([
-            'message' => 'Folder not found.',
+            'message' => 'FolderInternal not found.',
             'error'   => $e->getMessage(),
         ], Response::HTTP_NOT_FOUND); // HTTP 404 Not Found
 

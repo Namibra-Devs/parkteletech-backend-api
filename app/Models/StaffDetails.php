@@ -19,5 +19,12 @@ class StaffDetails extends Model
         'employment_status',
         'address',
         'documents',
+        'department',
+        'password',
+
+    ];
+
+    protected $hidden = [
+        'password',
     ];
 }

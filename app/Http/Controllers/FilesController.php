@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Files;
+use App\Models\FilesInternal;
 use App\Traits\Upload;
 use Illuminate\Support\Facades\Storage;
 
@@ -21,7 +21,7 @@ class FilesController extends Controller
         $file = $request->file('file');
         $path = $file->store('uploaded_files', 'public');
 
-        $fileRecord = Files::create([
+        $fileRecord = FilesInternal::create([
             'path' => $path,
         ]);
 
@@ -33,7 +33,7 @@ class FilesController extends Controller
 
     public function show($id)
     {
-        $fileRecord = Files::findOrFail($id);
+        $fileRecord = FilesInternal::findOrFail($id);
 
         return response()->json([
             'data' => $fileRecord,
@@ -42,7 +42,7 @@ class FilesController extends Controller
 
     public function index()
     {
-        $fileRecords = Files::all();
+        $fileRecords = FilesInternal::all();
 
         return response()->json([
             'data' => $fileRecords,
@@ -51,7 +51,7 @@ class FilesController extends Controller
 
     public function update(Request $request, $id)
     {
-        $fileRecord = Files::findOrFail($id);
+        $fileRecord = FilesInternal::findOrFail($id);
 
         $request->validate([
             'description' => 'sometimes|string|max:255',
@@ -66,7 +66,7 @@ class FilesController extends Controller
     }
     public function destroy($id)
     {
-        $fileRecord = Files::findOrFail($id);
+        $fileRecord = FilesInternal::findOrFail($id);
 
         $this->deleteFile($fileRecord->file_path);
 

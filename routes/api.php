@@ -4,6 +4,7 @@ use App\Http\Controllers\TrainingScheduleController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\JobPostingController;
 use App\Http\Controllers\StaffDetailsController;
+use App\Http\Controllers\StaffAuthController;
 use App\Http\Controllers\SubcontractorController;
 use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\EmailController;
@@ -12,6 +13,8 @@ use App\Http\Controllers\JobApplicationController;
 use App\Http\Controllers\PhotoReportController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\AuthCheckController;
+use App\Http\Controllers\FileControllerNew;
+use App\Http\Controllers\FolderControllerNew;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -26,11 +29,11 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-// Route::resource('products', ProductController::class);
 
 // Public routes
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/admin/login', [AuthController::class, 'adminLogin']);
+Route::post('/staff/login', [StaffAuthController::class, 'login']);
 
 // Auth check route
 Route::get('/check-auth', [AuthCheckController::class, 'checkAuth'])->name('auth.check');
@@ -116,29 +119,51 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     ]);
 
     // Folder routes
-    Route::resource('folders', FolderController::class)->names([
-        'index' => 'folders.index',
-        'store' => 'folders.store',
-        'show' => 'folders.show',
-        'update' => 'folders.update',
-        'destroy' => 'folders.destroy',
-    ]);
+    // Route::resource('folders', FolderController::class)->names([
+    //     'index' => 'folders.index',
+    //     'store' => 'folders.store',
+    //     'show' => 'folders.show',
+    //     'update' => 'folders.update',
+    //     'destroy' => 'folders.destroy',
+    // ]);
 
     // Photoreport routes
     Route::apiResource('photo_reports', PhotoReportController::class)
-    ->names([
-        'index'   => 'photo_reports.index',
-        'store'   => 'photo_reports.store',
-        'show'    => 'photo_reports.show',
-        'update'  => 'photo_reports.update',
-        'destroy' => 'photo_reports.destroy',
-    ]);
+        ->names([
+            'index'   => 'photo_reports.index',
+            'store'   => 'photo_reports.store',
+            'show'    => 'photo_reports.show',
+            'update'  => 'photo_reports.update',
+            'destroy' => 'photo_reports.destroy',
+        ]);
+
 
     // Sendmail Route
     Route::post('/send_email', [EmailController::class, 'sendEmail'])->name('send.email');
 
+    // Logout Route
     Route::post('/logout', [AuthController::class, 'logout']);
 });
+
+
+
+    // New Folder routes
+    Route::get('folders', [FolderControllerNew::class, 'index']);
+    Route::get('folders/{id}', [FolderControllerNew::class, 'show']);
+    Route::get('user-folders', [FolderControllerNew::class, 'getAllFolders']);
+    Route::get('all-folders', [FolderControllerNew::class, 'getAllFoldersWithoutUserId']);
+    Route::post('folders', [FolderControllerNew::class, 'create']);
+    Route::put('folders/{id}/rename', [FolderControllerNew::class, 'rename']);
+    Route::delete('/folders/delete', [FolderControllerNew::class, 'delete']);
+
+    // New File routes
+    Route::get('files', [FileControllerNew::class, 'index']);
+    Route::get('files/{id}', [FileControllerNew::class, 'show']);
+    Route::get('user-files', [FileControllerNew::class, 'getAllFiles']);
+    Route::get('all-files', [FileControllerNew::class, 'getAllFilesWithoutUserId']);
+    Route::post('files', [FileControllerNew::class, 'upload']);
+    Route::put('files/{id}/rename', [FileControllerNew::class, 'rename']);
+    Route::delete('/files/delete', [FileControllerNew::class, 'delete']);
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
