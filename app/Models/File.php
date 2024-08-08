@@ -1,28 +1,17 @@
 <?php
 
-// namespace App\Models;
-
-// use Illuminate\Database\Eloquent\Factories\HasFactory;
-// use Illuminate\Database\Eloquent\Model;
-
-// class Files extends Model
-// {
-//     use HasFactory;
-
-//     protected $fillable = ['staff_detail_id', 'name', 'path'];
-// }
-
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class File extends Model
 {
     use HasFactory;
+    use SoftDeletes;
 
-    protected $fillable = ['user_id', 'folder_id', 'name', 'path'];
+    protected $fillable = ['user_id', 'folder_id', 'name', 'path','size',];
 
     public function user()
     {

@@ -1,38 +1,17 @@
 <?php
 
-// namespace App\Models;
-
-// use Illuminate\Database\Eloquent\Model;
-
-// class Folder extends Model
-// {
-//     protected $fillable = [
-//         'folder_name',
-//         'vendor_name',
-//         'offer_date',
-//         'offer_link',
-//         'status',
-//         'file_path',
-//     ];
-
-//     protected $casts = [
-//         'offer_date' => 'timestamp',
-//     ];
-
-//     public $timestamps = true;
-// }
-
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Folder extends Model
 {
     use HasFactory;
+    use SoftDeletes;
 
-    protected $fillable = ['user_id', 'name', 'parent_id'];
+    protected $fillable = ['user_id', 'name', 'parent_id','size',];
 
     public function user()
     {

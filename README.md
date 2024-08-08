@@ -272,6 +272,4 @@
    - `DELETE /api/folders/delete`: Bulk delete folders
 
 3. **Staff Authentication**
-   - `POST /api/staff/register`: Register a new staff member
    - `POST /api/staff/login`: Login staff member
-   - `POST /api/staff/logout`: Logout staff member
