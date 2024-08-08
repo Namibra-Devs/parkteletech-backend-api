@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
-use App\Models\FilesInternal; // Import the FilesInternal model
+use App\Models\FilesInternal; 
 use App\Traits\Upload;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -79,7 +79,6 @@ class UserController extends Controller
                 'files' => $fileDetails,
                 'token' => $user->createToken('myapptoken')->plainTextToken
             ], 201);
-
         } catch (ValidationException $e) {
             if (isset($e->errors()['email'])) {
                 return response()->json([
@@ -270,8 +269,7 @@ class UserController extends Controller
             return response()->json([
                 'message' => 'User and associated files deleted successfully.',
             ], 200);
-        } catch (ModelNotFoundException $e)
-        {
+        } catch (ModelNotFoundException $e) {
             return $this->handleException($e, 'User not found.', 404);
         } catch (Exception $e) {
             return $this->handleException($e, 'An error occurred while deleting the user.', 500);
