@@ -8,21 +8,18 @@ class JobApplicationsRebuild2 extends Migration
 {
     public function up()
     {
-        Schema::create('job_applications', function (Blueprint $table) {
-            $table->id(); // Primary key
-            $table->unsignedBigInteger('job_id'); // Job reference
-            $table->string('applicant_name', 255); // Applicant's name
-            $table->string('status', 255); // Application status
-            $table->timestamp('date_applied')->nullable();
-            $table->timestamps(); // Adds created_at and updated_at
-
-            // Foreign key constraint
-            $table->foreign('job_id')->references('id')->on('job_postings')->onDelete('cascade');
+        Schema::table('job_applications', function (Blueprint $table) {
+            $table->timestamp('date_applied')->nullable()->change();
         });
     }
 
     public function down()
     {
-        Schema::dropIfExists('job_applications'); // Drop the table to revert the migration
+        Schema::table('your_table_name', function (Blueprint $table) {
+            // Reverse the changes made in the 'up' method
+            $table->string('data_applied')->useCurrent(); 
+
+            // Reverse other modifications if needed
+        });
     }
 }

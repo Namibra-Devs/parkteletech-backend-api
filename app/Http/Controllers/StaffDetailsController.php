@@ -46,74 +46,74 @@ class StaffDetailsController extends Controller
 
 
 
-     public function store(Request $request)
-     {
-         try {
-             $request->validate([
-                 'fullname'           => 'required|string|max:255',
-                 'email'              => 'required|string|email',
-                 'dob'                => 'required|date',
-                 'phone'              => 'required|string|max:20',
-                 'id_type'            => 'required|string',
-                 'id_no'              => 'required|string',
-                 'employment_status'  => 'required|string',
-                 'address'            => 'required|string',
-                 'department'         => 'required|string',
-             ]);
+    public function store(Request $request)
+    {
+        try {
+            $request->validate([
+                'fullname'           => 'required|string|max:255',
+                'email'              => 'required|string|email',
+                'dob'                => 'required|date',
+                'phone'              => 'required|string|max:20',
+                'id_type'            => 'required|string',
+                'id_no'              => 'required|string',
+                'employment_status'  => 'required|string',
+                'address'            => 'required|string',
+                'department'         => 'required|string',
+            ]);
 
-             $staffDetail = new StaffDetails([
-                 'fullname'          => $request->input('fullname'),
-                 'email'             => $request->input('email'),
-                 'dob'               => $request->input('dob'),
-                 'phone'             => $request->input('phone'),
-                 'id_type'           => $request->input('id_type'),
-                 'id_no'             => $request->input('id_no'),
-                 'employment_status'=> $request->input('employment_status'),
-                 'address'           => $request->input('address'),
-                 'department'           => $request->input('department'),
-             ]);
+            $staffDetail = new StaffDetails([
+                'fullname'          => $request->input('fullname'),
+                'email'             => $request->input('email'),
+                'dob'               => $request->input('dob'),
+                'phone'             => $request->input('phone'),
+                'id_type'           => $request->input('id_type'),
+                'id_no'             => $request->input('id_no'),
+                'employment_status' => $request->input('employment_status'),
+                'address'           => $request->input('address'),
+                'department'           => $request->input('department'),
+            ]);
 
-             $file_details = [];
+            $file_details = [];
 
-             if ($request->hasFile('files')) {
-                 foreach ($request->file('files') as $file) {
-                     $path = $this->UploadFile($file, 'staff_documents');
-                     $file_details[] = ['path' => $path];
-                 }
-             }
+            if ($request->hasFile('files')) {
+                foreach ($request->file('files') as $file) {
+                    $path = $this->UploadFile($file, 'staff_documents');
+                    $file_details[] = ['path' => $path];
+                }
+            }
 
-             $staffDetail->save();
-             $names = ['cv', 'cert', 'hse_cert'];
-             $count = 0;
+            $staffDetail->save();
+            $names = ['cv', 'cert', 'hse_cert'];
+            $count = 0;
 
-             foreach ($file_details as $file_detail) {
-                 Files::create([
-                     'staff_detail_id' => $staffDetail->id,
-                     'name'            => $names[$count],
-                     'path'            => $file_detail['path'],
-                 ]);
-                 $count++;
-             }
+            foreach ($file_details as $file_detail) {
+                Files::create([
+                    'staff_detail_id' => $staffDetail->id,
+                    'name'            => $names[$count],
+                    'path'            => $file_detail['path'],
+                ]);
+                $count++;
+            }
 
-             return response()->json([
-                 'message' => 'Staff detail and files saved successfully.',
-                 'data'    => $staffDetail,
-                 'files'   => $file_details,
-             ], 201); // HTTP 201 - Created
+            return response()->json([
+                'message' => 'Staff detail and files saved successfully.',
+                'data'    => $staffDetail,
+                'files'   => $file_details,
+            ], 201); // HTTP 201 - Created
 
-         } catch (ValidationException $e) {
-             return response()->json([
-                 'message' => 'Validation error.',
-                 'errors'  => $e->errors(),
-             ], 422); // HTTP 422 - Unprocessable Entity
+        } catch (ValidationException $e) {
+            return response()->json([
+                'message' => 'Validation error.',
+                'errors'  => $e->errors(),
+            ], 422); // HTTP 422 - Unprocessable Entity
 
-         } catch (Exception $e) {
-             return response()->json([
-                 'message' => 'An error occurred while processing your request.',
-                 'error'   => $e->getMessage(),
-             ], 500); // HTTP 500 - Internal Server Error
-         }
-     }
+        } catch (Exception $e) {
+            return response()->json([
+                'message' => 'An error occurred while processing your request.',
+                'error'   => $e->getMessage(),
+            ], 500); // HTTP 500 - Internal Server Error
+        }
+    }
 
 
     /**
@@ -164,7 +164,7 @@ class StaffDetailsController extends Controller
                 'phone'             => 'sometimes|string|max:20',
                 'id_type'           => 'sometimes|string',
                 'id_no'             => 'sometimes|string',
-                'employment_status'=> 'sometimes|string',
+                'employment_status' => 'sometimes|string',
                 'address'           => 'sometimes|string',
                 'department'         => 'required|string',
             ]);
@@ -198,10 +198,8 @@ class StaffDetailsController extends Controller
                     ]);
 
                     $count++;
-
-
+                }
             }
-        }
 
             $updatedFiles = Files::where('staff_detail_id', $staffDetail->id)->get();
 
@@ -271,5 +269,21 @@ class StaffDetailsController extends Controller
                 'error'   => $e->getMessage(),
             ], 500); // HTTP 500 - Internal Server Error
         }
+    }
+
+    public function search(Request $request)
+    {
+        $request->validate([
+            'name' => 'string | required'
+        ]);
+        $searchItem = $request->input('name'); // Get the search term from the request
+        // dd($searchItem);
+
+        $staff = StaffDetails::where('fullname', 'like', "%{$searchItem}%")
+            ->get();
+        
+        return response()->json([
+            'data' => $staff 
+        ]);
     }
 }

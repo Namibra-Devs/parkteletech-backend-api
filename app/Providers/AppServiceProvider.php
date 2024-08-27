@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -23,6 +25,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
+        $dateTimeType = Type::getType(Types::DATETIME_MUTABLE);
+        Type::addType('timestamp', $dateTimeType::class);
     }
 }

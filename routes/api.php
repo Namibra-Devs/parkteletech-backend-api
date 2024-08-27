@@ -85,6 +85,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
         'update' => 'subcontractor.update',
         'destroy' => 'subcontractor.destroy',
     ]);
+    Route::post('staff/search', [StaffDetailsController::class, 'search'])->name('staff.search');
 
     // Document management routes
     Route::resource('documents', DocumentController::class)->names([
@@ -126,13 +127,13 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 
     // Photoreport routes
     Route::apiResource('photo_reports', PhotoReportController::class)
-    ->names([
-        'index'   => 'photo_reports.index',
-        'store'   => 'photo_reports.store',
-        'show'    => 'photo_reports.show',
-        'update'  => 'photo_reports.update',
-        'destroy' => 'photo_reports.destroy',
-    ]);
+        ->names([
+            'index'   => 'photo_reports.index',
+            'store'   => 'photo_reports.store',
+            'show'    => 'photo_reports.show',
+            'update'  => 'photo_reports.update',
+            'destroy' => 'photo_reports.destroy',
+        ]);
 
     // Sendmail Route
     Route::post('/send_email', [EmailController::class, 'sendEmail'])->name('send.email');
