@@ -276,14 +276,11 @@ class StaffDetailsController extends Controller
         $request->validate([
             'name' => 'string | required'
         ]);
-        $searchItem = $request->input('name'); // Get the search term from the request
-        // dd($searchItem);
-
+        $searchItem = $request->input('name');
         $staff = StaffDetails::where('fullname', 'like', "%{$searchItem}%")
             ->get();
-        
         return response()->json([
-            'data' => $staff 
+            'data' => $staff
         ]);
     }
 }
