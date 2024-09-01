@@ -15,6 +15,9 @@ class CreateSalariesTable extends Migration
     {
         Schema::create('salaries', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('staff_detail_id')->constrained('staff_details')->onDelete('cascade');
+            $table->integer('basic_salary');
+            $table->json('allowances');
             $table->timestamps();
         });
     }
