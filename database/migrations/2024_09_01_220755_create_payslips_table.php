@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateSalariesTable extends Migration
+class CreatePayslipsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,12 @@ class CreateSalariesTable extends Migration
      */
     public function up()
     {
-        Schema::create('salaries', function (Blueprint $table) {
+        Schema::create('payslips', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('staff_details_id')->constrained('staff_details')->onDelete('cascade');
-            $table->integer('basic_salary');
-            $table->json('allowances');
+            $table->foreignId('staff_details_id')->constrained('staff_detail');
+            $table->json('earnings');
+            $table->json('deductions');
+            $table->integer('status')->default(0);
             $table->timestamps();
         });
     }
@@ -29,6 +30,6 @@ class CreateSalariesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('salaries');
+        Schema::dropIfExists('payslips');
     }
 }

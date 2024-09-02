@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class StaffDetails extends Model
 {
@@ -20,4 +21,8 @@ class StaffDetails extends Model
         'address',
         'documents',
     ];
+
+    public function salary() {
+        return $this->hasOne(Salary::class);
+    }
 }

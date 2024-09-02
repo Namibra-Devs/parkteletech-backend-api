@@ -36,7 +36,7 @@ Route::post('/admin/login', [AuthController::class, 'adminLogin']);
 Route::get('/check-auth', [AuthCheckController::class, 'checkAuth'])->name('auth.check');
 
 // Protected routes
-Route::group(['middleware' => ['auth:sanctum']], function () {
+Route::group(['middleware' => ['forceJson']], function () {
     // Training schedule route
     Route::get('/training_shedule', [
         TrainingScheduleController::class,

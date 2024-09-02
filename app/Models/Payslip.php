@@ -2,26 +2,28 @@
 
 namespace App\Models;
 
-use App\Casts\Money;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Salary extends Model
+class Payslip extends Model
 {
     use HasFactory;
 
     protected $fillable = [
         'employee_id',
         'basic_salary',
-        'allowances',
+        'deductions',
+        'earnings',
+        'status',
     ];
 
     protected $casts = [
-        'allowances' => 'array',
-        'basic_salary' => Money::class,
+        'deductions' => 'array',
+        'earnings' => 'array',
+        'status' => \App\Casts\PayslipStatus::class
     ];
 
-    public function staff()
+    public function employee()
     {
         return $this->belongsTo(StaffDetails::class);
     }

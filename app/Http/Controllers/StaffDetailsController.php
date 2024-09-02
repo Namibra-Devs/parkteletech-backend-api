@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\StaffDetails;
 use Illuminate\Http\Request;
 use App\Models\Files;
+use App\Models\Tax;
 use App\Traits\Upload;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Storage;
@@ -277,10 +278,13 @@ class StaffDetailsController extends Controller
             'name' => 'string | required'
         ]);
         $searchItem = $request->input('name');
-        $staff = StaffDetails::where('fullname', 'like', "%{$searchItem}%")
+        $staff = StaffDetails::where('fullname', 'like', "%{$searchItem}%")->with('salary')
             ->get();
         return response()->json([
-            'data' => $staff
+            'data' => $staff,
+            'dependencies' => [
+                'taxes' => Tax::all(),
+            ]
         ]);
     }
 }

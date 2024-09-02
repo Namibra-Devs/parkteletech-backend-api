@@ -15,7 +15,7 @@ class JobApplicationsRebuild2 extends Migration
 
     public function down()
     {
-        Schema::table('your_table_name', function (Blueprint $table) {
+        Schema::table('job_applications', function (Blueprint $table) {
             // Reverse the changes made in the 'up' method
             $table->string('data_applied')->useCurrent(); 
 

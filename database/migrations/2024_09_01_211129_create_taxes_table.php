@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateSalariesTable extends Migration
+class CreateTaxesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,11 @@ class CreateSalariesTable extends Migration
      */
     public function up()
     {
-        Schema::create('salaries', function (Blueprint $table) {
+        Schema::create('taxes', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('staff_details_id')->constrained('staff_details')->onDelete('cascade');
-            $table->integer('basic_salary');
-            $table->json('allowances');
+            $table->string('name');
+            $table->decimal('rate', 5, 2); // Tax rate in percentage
+            $table->string('description')->nullable();
             $table->timestamps();
         });
     }
@@ -29,6 +29,6 @@ class CreateSalariesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('salaries');
+        Schema::dropIfExists('taxes');
     }
 }
