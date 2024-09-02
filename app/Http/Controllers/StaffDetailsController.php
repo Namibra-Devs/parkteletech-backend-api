@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Department;
 use App\Models\StaffDetails;
 use Illuminate\Http\Request;
 use App\Models\Files;
@@ -284,6 +285,7 @@ class StaffDetailsController extends Controller
             'data' => $staff,
             'dependencies' => [
                 'taxes' => Tax::all(),
+                'departments' => Department::all()
             ]
         ]);
     }

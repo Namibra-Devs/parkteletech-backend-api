@@ -24,7 +24,8 @@ class CreatePayslipRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            "employee_id" => 'required|exists:employees,id',
+            ""
         ];
     }
 }
