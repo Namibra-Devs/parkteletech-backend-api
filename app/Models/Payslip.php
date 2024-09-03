@@ -21,7 +21,6 @@ class Payslip extends Model
         'deductions' => 'array',
         'earnings' => 'array',
         'status' => \App\Casts\PayslipStatus::class,
-        'total' => \App\Casts\Money::class
     ];
 
     public function staffDetails()
