@@ -15,7 +15,7 @@ class CreatePayslipsTable extends Migration
     {
         Schema::create('payslips', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('staff_details_id')->constrained('staff_detail');
+            $table->foreignId('staff_details_id')->constrained('staff_details');
             $table->json('earnings');
             $table->json('deductions');
             $table->integer('status')->default(0);

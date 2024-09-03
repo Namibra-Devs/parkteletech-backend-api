@@ -13,7 +13,7 @@ class CreatePayslipRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return auth()->check();
+        return true;
     }
 
     /**
@@ -24,8 +24,9 @@ class CreatePayslipRequest extends FormRequest
     public function rules()
     {
         return [
-            "employee_id" => 'required|exists:employees,id',
-            ""
+            "employee_id" => 'required|exists:staff_details,id',
+            "earnings" => 'required|array',
+            "deductions" => 'required|array',
         ];
     }
 }

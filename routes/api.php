@@ -12,6 +12,7 @@ use App\Http\Controllers\JobApplicationController;
 use App\Http\Controllers\PhotoReportController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\AuthCheckController;
+use App\Http\Controllers\PayslipController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -134,6 +135,10 @@ Route::group(['middleware' => ['forceJson']], function () {
             'update'  => 'photo_reports.update',
             'destroy' => 'photo_reports.destroy',
         ]);
+
+    Route::group(['prefix' => 'payslip'], function () {
+        Route::post('/', [PayslipController::class, 'create'])->name('payslip.create');
+    });
 
     // Sendmail Route
     Route::post('/send_email', [EmailController::class, 'sendEmail'])->name('send.email');

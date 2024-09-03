@@ -17,7 +17,12 @@ class PayslipStatus implements CastsAttributes
      */
     public function get($model, string $key, $value, array $attributes)
     {
-        return \App\Enums\PaySlipStatus::from($value);
+        return match ($value) {
+            0 => 'Draft',
+            1 => 'Generated',
+            2 => 'Paid',
+            default => null,
+        };
     }
 
     /**
@@ -31,11 +36,13 @@ class PayslipStatus implements CastsAttributes
      */
     public function set($model, string $key, $value, array $attributes)
     {
-        return match ($value) {
-            'Draft' => 0,
-            'Generated' => 1,
-            'Paid' => 2,
-            default => null,
-        };
+        if (gettype($value) === 'string' && in_array($value, ['Draft', 'Generated', 'Paid']))
+            return match ($value) {
+                'Draft' => 0,
+                'Generated' => 1,
+                'Paid' => 2,
+                default => null,
+            };
+        return $value;
     }
 }

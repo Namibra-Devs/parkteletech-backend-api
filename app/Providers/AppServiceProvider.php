@@ -2,14 +2,19 @@
 
 namespace App\Providers;
 
-use App\Service\Interfaces\PayslipContract;
-use App\Service\PayslipService;
+use App\Services\Interfaces\PayslipContract;
+use App\Services\PayslipService;
 use Doctrine\DBAL\Types\Type;
 use Doctrine\DBAL\Types\Types;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
+
+    public $bindings = [
+        PayslipContract::class => PayslipService::class
+    ];
+
     /**
      * Register any application services.
      *
@@ -17,7 +22,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->bind(PayslipService::class, PayslipContract::class);
     }
 
     /**

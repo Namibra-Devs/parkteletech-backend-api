@@ -10,20 +10,21 @@ class Payslip extends Model
     use HasFactory;
 
     protected $fillable = [
-        'employee_id',
-        'basic_salary',
+        'staff_details_id',
         'deductions',
         'earnings',
         'status',
+        'total'
     ];
 
     protected $casts = [
         'deductions' => 'array',
         'earnings' => 'array',
-        'status' => \App\Casts\PayslipStatus::class
+        'status' => \App\Casts\PayslipStatus::class,
+        'total' => \App\Casts\Money::class
     ];
 
-    public function employee()
+    public function staffDetails()
     {
         return $this->belongsTo(StaffDetails::class);
     }
